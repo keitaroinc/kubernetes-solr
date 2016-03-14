@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: solr-controller
+  namespace: default
+  labels:
+    app: solr-controller
+spec:
+  replicas: 1
+  selector:
+    app: solr-pod
+  template:
+    metadata:
+      labels:
+        app: solr-pod
+    spec:
+      containers:
+      - name: solr-container
+        image: mosuka/docker-solr:release-5.5
+        ports:
+        - name: solr
+          containerPort: 8983
+          protocol: TCP
+        - name: stop
+          containerPort: 7983
+          protocol: TCP
+        - name: rmi
+          containerPort: 18983
+          protocol: TCP
