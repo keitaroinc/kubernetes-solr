@@ -6,13 +6,14 @@ Kubernetes resource for Apache Solr.
 ### 1. Clone kubernetes-solr
 
 ```sh
+cd ${HOME}
 $ git clone https://github.com/mosuka/kubernetes-solr.git
 ```
 
 ### 2. Start Solr service
 
 ```sh
-$ $ kubectl create -f $HOME/git/kubernetes-solr/5.5/solr-service.yaml
+$ kubectl create -f ${HOME}/git/kubernetes-solr/5.5/solr-service.yaml
 You have exposed your service on an external port on all nodes in your
 cluster.  If you want to expose this service to the external internet, you may
 need to set up firewall rules for the service port(s) (tcp:32661,tcp:30312,tcp:32347) to serve traffic.
@@ -32,7 +33,7 @@ solr-service   10.3.0.130   nodes         8983/TCP,7983/TCP,18983/TCP   app=zook
 ### 4 Start Solr controller
 
 ```sh
-$ kubectl create -f $HOME/git/kubernetes-solr/5.5/solr-controller.yaml
+$ kubectl create -f ${HOME}/git/kubernetes-solr/5.5/solr-controller.yaml
 replicationcontroller "solr-controller" created
 ```
 
