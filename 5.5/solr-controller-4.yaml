@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: solr-controller-4
+  namespace: default
+  labels:
+    group: solr-controller
+    app: solr-controller-4
+spec:
+  replicas: 1
+  selector:
+    app: solr-pod-4
+  template:
+    metadata:
+      labels:
+        group: solr-pod
+        app: solr-pod-4
+    spec:
+      containers:
+      - name: solr-container-4
+        image: mosuka/docker-solr:release-5.5
+        ports:
+        - name: solr
+          containerPort: 8983
+          protocol: TCP
+        - name: stop
+          containerPort: 7983
+          protocol: TCP
+        - name: rmi
+          containerPort: 18983
+          protocol: TCP
+        env:
+        - name: SOLR_HOST
+          value: solr-service-4
+        - name: ZK_HOST
+          value: zookeeper-service-1:2181,zookeeper-service-2:2181,zookeeper-service-3:2181/solr
