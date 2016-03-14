@@ -66,7 +66,7 @@ $ kubectl get services -l app=solr-service --template "{{ range .items }}{{ rang
 
 ```sh
 $ curl "http://172.17.4.202:30647/solr/admin/cores?action=CREATE&name=collection1&configSet=data_driven_schema_configs&dataDir=data" | \
->     xmllint --format -
+    xmllint --format -
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100   184    0   184    0     0     39      0 --:--:--  0:00:04 --:--:--    39
