@@ -117,7 +117,7 @@ Checking connectivity... done.
 ### 3. Start Solr services
 
 ```sh
-$ $ kubectl create -f ${HOME}/git/kubernetes-solr/5.5/solr-service-1.yaml
+$ kubectl create -f ${HOME}/git/kubernetes-solr/5.5/solr-service-1.yaml
 You have exposed your service on an external port on all nodes in your
 cluster.  If you want to expose this service to the external internet, you may
 need to set up firewall rules for the service port(s) (tcp:31946,tcp:32766,tcp:31129) to serve traffic.
@@ -191,12 +191,12 @@ solr-controller-4   solr-container-4   mosuka/docker-solr:release-5.5   app=solr
 ### 7. Check Solr pods
 
 ```sh
-$ kubectl get pods -l group=solr-pod
-NAME                      READY     STATUS    RESTARTS   AGE
-solr-controller-1-l505l   1/1       Running   0          1m
-solr-controller-2-rivba   1/1       Running   0          1m
-solr-controller-3-x04e2   1/1       Running   0          50s
-solr-controller-4-imzd7   1/1       Running   0          38s
+$ kubectl get pods -l group=solr-pod -o wide
+NAME                      READY     STATUS    RESTARTS   AGE       NODE
+solr-controller-1-cu2f8   1/1       Running   0          1m        172.17.4.202
+solr-controller-2-yeh1u   1/1       Running   0          1m        172.17.4.202
+solr-controller-3-gi4i2   1/1       Running   0          54s       172.17.4.202
+solr-controller-4-9b8t1   1/1       Running   0          48s       172.17.4.202
 ```
 
 ### 8. Get host IP and port
