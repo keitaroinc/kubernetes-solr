@@ -74,7 +74,10 @@ $ SOLR_PORT=$(kubectl get services -l app=solr-service --template "{{ range .ite
 ### 8. Create core
 
 ```sh
-$ curl "http://${SOLR_HOST}:${SOLR_PORT}/solr/admin/cores?action=CREATE&name=collection1&configSet=data_driven_schema_configs&dataDir=data" | \
+$ COLLECTION_NAME=collection1
+$ CONFIG_SET=data_driven_schema_configs
+$ DATA_DIR=data
+$ curl "http://${SOLR_HOST}:${SOLR_PORT}/solr/admin/cores?action=CREATE&name=${COLLECTION_NAME}&configSet=${CONFIG_SET}&dataDir=${DATA_DIR}" | \
     xmllint --format -
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
@@ -91,7 +94,12 @@ $ curl "http://${SOLR_HOST}:${SOLR_PORT}/solr/admin/cores?action=CREATE&name=col
 
 ### 9. Open Solr Admin UI in a browser
 
-Open Solr Admin UI ([http://172.17.4.202:30647/solr/#/](http://172.17.4.202:30647/solr/#/)) in a browser.
+```sh
+$ SOLR_ADMIN_UI=http://${SOLR_HOST}:${SOLR_PORT}/solr/#/
+$ echo ${SOLR_ADMIN_UI}
+```
+
+Open Solr Admin UI in a browser.
 
 
 
@@ -202,60 +210,105 @@ solr-controller-4-9b8t1   1/1       Running   0          48s       172.17.4.202
 ### 8. Get host IP and port
 
 ```sh
-$ SOLR_1_HOST=$(kubectl get pods -l app=solr-pod-1 --template "{{ range .items }}{{if eq .status.phase \"Running\" }}{{ .status.hostIP }}{{ end }}{{ end }}") && \
-    echo ${SOLR_1_HOST}
-172.17.4.202
+$ SOLR_1_HOST=$(kubectl get pods -l app=solr-pod-1 --template "{{ range .items }}{{if eq .status.phase \"Running\" }}{{ .status.hostIP }}{{ end }}{{ end }}")
+$ echo ${SOLR_1_HOST}
+172.17.4.201
 
-$ SOLR_1_PORT=$(kubectl get services -l app=solr-service-1 --template "{{ range .items }}{{ range .spec.ports }}{{ if eq .name \"solr\" }}{{ .nodePort }}{{ end }}{{ end }}{{ end }}") && \
-    echo ${SOLR_1_PORT}
+$ SOLR_1_PORT=$(kubectl get services -l app=solr-service-1 --template "{{ range .items }}{{ range .spec.ports }}{{ if eq .name \"solr\" }}{{ .nodePort }}{{ end }}{{ end }}{{ end }}")
+$ echo ${SOLR_1_PORT}
 31946
 
-$ SOLR_2_HOST=$(kubectl get pods -l app=solr-pod-2 --template "{{ range .items }}{{if eq .status.phase \"Running\" }}{{ .status.hostIP }}{{ end }}{{ end }}") && \
-    echo ${SOLR_2_HOST}
+$ SOLR_2_HOST=$(kubectl get pods -l app=solr-pod-2 --template "{{ range .items }}{{if eq .status.phase \"Running\" }}{{ .status.hostIP }}{{ end }}{{ end }}")
+$ echo ${SOLR_2_HOST}
 172.17.4.201
 
-$ SOLR_2_PORT=$(kubectl get services -l app=solr-service-2 --template "{{ range .items }}{{ range .spec.ports }}{{ if eq .name \"solr\" }}{{ .nodePort }}{{ end }}{{ end }}{{ end }}") && \
-    echo ${SOLR_2_PORT}
+$ SOLR_2_PORT=$(kubectl get services -l app=solr-service-2 --template "{{ range .items }}{{ range .spec.ports }}{{ if eq .name \"solr\" }}{{ .nodePort }}{{ end }}{{ end }}{{ end }}")
+$ echo ${SOLR_2_PORT}
 30731
 
-$ SOLR_3_HOST=$(kubectl get pods -l app=solr-pod-3 --template "{{ range .items }}{{if eq .status.phase \"Running\" }}{{ .status.hostIP }}{{ end }}{{ end }}") && \
-    echo ${SOLR_3_HOST}
+$ SOLR_3_HOST=$(kubectl get pods -l app=solr-pod-3 --template "{{ range .items }}{{if eq .status.phase \"Running\" }}{{ .status.hostIP }}{{ end }}{{ end }}")
+$ echo ${SOLR_3_HOST}
 172.17.4.201
 
-$ SOLR_3_PORT=$(kubectl get services -l app=solr-service-3 --template "{{ range .items }}{{ range .spec.ports }}{{ if eq .name \"solr\" }}{{ .nodePort }}{{ end }}{{ end }}{{ end }}") && \
-    echo ${SOLR_3_PORT}
+$ SOLR_3_PORT=$(kubectl get services -l app=solr-service-3 --template "{{ range .items }}{{ range .spec.ports }}{{ if eq .name \"solr\" }}{{ .nodePort }}{{ end }}{{ end }}{{ end }}")
+$ echo ${SOLR_3_PORT}
 30933
 
-$ SOLR_4_HOST=$(kubectl get pods -l app=solr-pod-4 --template "{{ range .items }}{{if eq .status.phase \"Running\" }}{{ .status.hostIP }}{{ end }}{{ end }}") && \
-    echo ${SOLR_4_HOST}
+$ SOLR_4_HOST=$(kubectl get pods -l app=solr-pod-4 --template "{{ range .items }}{{if eq .status.phase \"Running\" }}{{ .status.hostIP }}{{ end }}{{ end }}")
+$ echo ${SOLR_4_HOST}
 172.17.4.201
 
-$ SOLR_4_PORT=$(kubectl get services -l app=solr-service-4 --template "{{ range .items }}{{ range .spec.ports }}{{ if eq .name \"solr\" }}{{ .nodePort }}{{ end }}{{ end }}{{ end }}") && \
-    echo ${SOLR_4_PORT}
+$ SOLR_4_PORT=$(kubectl get services -l app=solr-service-4 --template "{{ range .items }}{{ range .spec.ports }}{{ if eq .name \"solr\" }}{{ .nodePort }}{{ end }}{{ end }}{{ end }}")
+$ echo ${SOLR_4_PORT}
 31848
-
-### 9. Get /live_nodes
-
-```sh
-$ LIVE_NODES=$(echo $(curl "http://${SOLR_1_HOST}:${SOLR_1_PORT}/solr/admin/zookeeper?detail=true&path=%2Flive_nodes" | jq -r '.tree[].children[].data.title') | sed -e s'/ /,/g')
-$ echo ${LIVE_NODES}
-solr-service-1:8983_solr,solr-service-2:8983_solr,solr-service-3:8983_solr,solr-service-4:8983_solr
-```
 
 ### 9. Create collection
 
 ```sh
-$ curl "http://${SOLR_1_HOST}:${SOLR_1_PORT}/solr/admin/collections?action=CREATE&name=collection1&numShards=2&replicationFactor=2&maxShardsPerNode=1&createNodeSet=${LIVE_NODES}&collection.configName=data_driven_schema_configs" | \
+$ COLLECTION_NAME=collection1
+$ NUM_SHARDS=2
+$ REPLICATION_FACTOR=2
+$ MAX_SHARDS_PER_NODE=1
+$ CREATE_NODE_SET=$(echo $(curl "http://${SOLR_1_HOST}:${SOLR_1_PORT}/solr/admin/zookeeper?detail=true&path=%2Flive_nodes" | jq -r '.tree[].children[].data.title') | sed -e s'/ /,/g')
+$ COLLECTION_CONFIG_NAME=data_driven_schema_configs
+$ curl "http://${SOLR_1_HOST}:${SOLR_1_PORT}/solr/admin/collections?action=CREATE&name=${COLLECTION_NAME}&numShards=${NUM_SHARDS}&replicationFactor=${REPLICATION_FACTOR}&maxShardsPerNode=${MAX_SHARDS_PER_NODE}&createNodeSet=${CREATE_NODE_SET}&collection.configName=${COLLECTION_CONFIG_NAME}" | \
     xmllint --format -
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-100   184    0   184    0     0     39      0 --:--:--  0:00:04 --:--:--    39
+100   773    0   773    0     0     14      0 --:--:--  0:00:53 --:--:--   193
 <?xml version="1.0" encoding="UTF-8"?>
 <response>
   <lst name="responseHeader">
     <int name="status">0</int>
-    <int name="QTime">4621</int>
+    <int name="QTime">53321</int>
   </lst>
-  <str name="core">collection1</str>
+  <lst name="success">
+    <lst>
+      <lst name="responseHeader">
+        <int name="status">0</int>
+        <int name="QTime">43029</int>
+      </lst>
+      <str name="core">collection1_shard1_replica1</str>
+    </lst>
+    <lst>
+      <lst name="responseHeader">
+        <int name="status">0</int>
+        <int name="QTime">42715</int>
+      </lst>
+      <str name="core">collection1_shard1_replica2</str>
+    </lst>
+    <lst>
+      <lst name="responseHeader">
+        <int name="status">0</int>
+        <int name="QTime">50099</int>
+      </lst>
+      <str name="core">collection1_shard2_replica2</str>
+    </lst>
+    <lst>
+      <lst name="responseHeader">
+        <int name="status">0</int>
+        <int name="QTime">50386</int>
+      </lst>
+      <str name="core">collection1_shard2_replica1</str>
+    </lst>
+  </lst>
 </response>
 ```
+
+### 10. Open Solr Admin UI in a browser
+
+```sh
+$ SOLR_1_ADMIN_UI=http://${SOLR_1_HOST}:${SOLR_1_PORT}/solr/#/
+$ echo ${SOLR_1_ADMIN_UI}
+$ SOLR_2_ADMIN_UI=http://${SOLR_2_HOST}:${SOLR_2_PORT}/solr/#/
+$ echo ${SOLR_2_ADMIN_UI}
+$ SOLR_3_ADMIN_UI=http://${SOLR_3_HOST}:${SOLR_3_PORT}/solr/#/
+$ echo ${SOLR_3_ADMIN_UI}
+$ SOLR_4_ADMIN_UI=http://${SOLR_4_HOST}:${SOLR_4_PORT}/solr/#/
+$ echo ${SOLR_4_ADMIN_UI}
+```
+
+Open Solr Admin UI in a browser.
+
+
+

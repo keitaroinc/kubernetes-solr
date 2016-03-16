@@ -31,6 +31,9 @@ spec:
           protocol: TCP
         env:
         - name: SOLR_HOST
-          value: solr-service-1
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        #  value: solr-service-1
         - name: ZK_HOST
           value: zookeeper-service-1:2181,zookeeper-service-2:2181,zookeeper-service-3:2181/solr

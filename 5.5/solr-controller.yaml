@@ -27,3 +27,8 @@ spec:
         - name: rmi
           containerPort: 18983
           protocol: TCP
+        env:
+        - name: SOLR_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
