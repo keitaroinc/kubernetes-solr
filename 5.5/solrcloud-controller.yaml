@@ -1,23 +1,21 @@
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: solr-controller-2
+  name: solr-controller
   namespace: default
   labels:
-    group: solr-controller
-    app: solr-controller-2
+    app: solr-controller
 spec:
-  replicas: 1
+  replicas: 4
   selector:
-    app: solr-pod-2
+    app: solr-pod
   template:
     metadata:
       labels:
-        group: solr-pod
-        app: solr-pod-2
+        app: solr-pod
     spec:
       containers:
-      - name: solr-container-2
+      - name: solr-container
         image: mosuka/docker-solr:release-5.5
         ports:
         - name: solr
@@ -36,3 +34,9 @@ spec:
               fieldPath: status.podIP
         - name: ZK_HOST
           value: zookeeper-service-1:2181,zookeeper-service-2:2181,zookeeper-service-3:2181/solr
+        - name: COLLECTION_NAME
+          value: collection1
+        - name: NUM_SHARDS
+          value: "2"
+        - name: COLLECTION_CONFIG_NAME
+          value: data_driven_schema_configs
