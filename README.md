@@ -159,15 +159,16 @@ $ SOLR_HOST=${SOLR_HOST_LIST[0]}
 $ echo ${SOLR_HOST}
 
 $ SOLR_PORT=$(kubectl get services -l app=solr-service --template "{{ range .items }}{{ range .spec.ports }}{{ if eq .name \"solr\" }}{{ .nodePort }}{{ end }}{{ end }}{{ end }}")
-$ echo ${SOLR_1_PORT}
-31946
+$ echo ${SOLR_PORT}
+32661
 ```
 
 ### 9. Open Solr Admin UI in a browser
 
 ```sh
-$ SOLR_ADMIN_UI=http://${SOLR_HOST}:${SOLR_1_PORT}/solr/#/
+$ SOLR_ADMIN_UI=http://${SOLR_HOST}:${SOLR_PORT}/solr/#/
 $ echo ${SOLR_ADMIN_UI}
+http://172.17.4.201:32661/solr/#/
 ```
 
 Open Solr Admin UI in a browser.
