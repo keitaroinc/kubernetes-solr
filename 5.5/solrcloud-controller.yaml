@@ -6,7 +6,7 @@ metadata:
   labels:
     app: solr-controller
 spec:
-  replicas: 4
+  replicas: 2
   selector:
     app: solr-pod
   template:
